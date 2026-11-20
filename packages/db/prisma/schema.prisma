@@ -1,0 +1,754 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  CASHIER
+  WAITER
+}
+
+enum DeviceType {
+  POS
+  KDS
+  WAITER_APP
+  ADMIN_PANEL
+}
+
+enum Unit {
+  PORTION
+  KG
+  PIECE
+  LITER
+  BOTTLE
+  CUP
+}
+
+enum StockMovementType {
+  IN
+  OUT_SALE
+  WASTE
+  ADJUST
+  RETURN
+}
+
+enum TableStatus {
+  VACANT
+  OCCUPIED
+  PAYMENT_PENDING
+  RESERVED
+}
+
+enum OrderType {
+  DINE_IN
+  TAKEAWAY
+  DELIVERY
+}
+
+enum OrderStatus {
+  OPEN
+  SENT
+  PAID
+  CANCELLED
+  REFUNDED
+}
+
+enum OrderItemStatus {
+  PENDING
+  COOKING
+  READY
+  SERVED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  CLICK
+  PAYME
+  DEBT
+  MIXED
+}
+
+enum ReceiptType {
+  SALE
+  KITCHEN
+  COPY
+  Z_REPORT
+  X_REPORT
+}
+
+enum CashMovementType {
+  INFLOW
+  OUTFLOW
+  EXPENSE
+  COLLECTION
+}
+
+enum PrinterType {
+  USB
+  NETWORK
+  BLUETOOTH
+}
+
+enum SyncStatus {
+  PENDING
+  SYNCING
+  COMPLETED
+  FAILED
+}
+
+enum SyncOperation {
+  CREATE
+  UPDATE
+  DELETE
+}
+
+model Branch {
+  id          String    @id
+  name        String
+  address     String?
+  phone       String?
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  version     Int       @default(1)
+  syncedAt    DateTime?
+  deviceId    String?
+
+  users           User[]
+  devices         Device[]
+  categories      Category[]
+  menuItems       MenuItem[]
+  ingredients     Ingredient[]
+  stockMovements  StockMovement[]
+  suppliers       Supplier[]
+  halls           Hall[]
+  orders          Order[]
+  payments        Payment[]
+  shifts          Shift[]
+  cashMovements   CashMovement[]
+  customers       Customer[]
+  debtTransactions DebtTransaction[]
+  discounts       Discount[]
+  printers        Printer[]
+  settings        Setting[]
+  auditLogs       AuditLog[]
+  syncQueues      SyncQueue[]
+
+  @@map("branches")
+}
+
+model User {
+  id            String    @id
+  branchId      String
+  fullName      String
+  username      String?   @unique
+  passwordHash  String?
+  pinHash       String
+  role          UserRole  @default(CASHIER)
+  discountLimit Int       @default(0) // foizda, masalan 10%
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+  version       Int       @default(1)
+  syncedAt      DateTime?
+  deviceId      String?
+
+  branch        Branch    @relation(fields: [branchId], references: [id])
+  cashierOrders Order[]   @relation("CashierOrders")
+  waiterOrders  Order[]   @relation("WaiterOrders")
+  shifts        Shift[]
+  auditLogs     AuditLog[]
+  priceChanges  PriceHistory[]
+
+  @@map("users")
+}
+
+model Device {
+  id           String     @id
+  branchId     String
+  name         String
+  type         DeviceType @default(POS)
+  deviceToken  String?    @unique
+  lastActiveAt DateTime?
+  isActive     Boolean    @default(true)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  deletedAt    DateTime?
+  version      Int        @default(1)
+  syncedAt     DateTime?
+  deviceId     String?
+
+  branch       Branch     @relation(fields: [branchId], references: [id])
+
+  @@map("devices")
+}
+
+model Category {
+  id          String     @id
+  branchId    String
+  nameUz      String
+  nameRu      String?
+  icon        String?
+  color       String?
+  sortOrder   Int        @default(0)
+  isActive    Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  deletedAt   DateTime?
+  version     Int        @default(1)
+  syncedAt    DateTime?
+  deviceId    String?
+
+  branch      Branch     @relation(fields: [branchId], references: [id])
+  menuItems   MenuItem[]
+
+  @@map("categories")
+}
+
+model MenuItem {
+  id               String            @id
+  branchId         String
+  categoryId       String
+  nameUz           String
+  nameRu           String?
+  imageUrl         String?
+  price            Int               // so'm (tiyinsiz)
+  costPrice        Int               @default(0) // tannarx
+  unit             Unit              @default(PORTION)
+  kitchenStationId String?
+  isAvailable      Boolean           @default(true)
+  isActive         Boolean           @default(true)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  deletedAt        DateTime?
+  version          Int               @default(1)
+  syncedAt         DateTime?
+  deviceId         String?
+
+  branch           Branch            @relation(fields: [branchId], references: [id])
+  category         Category          @relation(fields: [categoryId], references: [id])
+  variants         MenuItemVariant[]
+  modifierGroups   ModifierGroup[]
+  orderItems       OrderItem[]
+  recipe           Recipe?
+  priceHistories   PriceHistory[]
+
+  @@map("menu_items")
+}
+
+model MenuItemVariant {
+  id          String      @id
+  menuItemId  String
+  nameUz      String
+  nameRu      String?
+  price       Int         // so'm
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  deletedAt   DateTime?
+  version     Int         @default(1)
+  syncedAt    DateTime?
+  deviceId    String?
+
+  menuItem    MenuItem    @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  orderItems  OrderItem[]
+
+  @@map("menu_item_variants")
+}
+
+model ModifierGroup {
+  id          String     @id
+  menuItemId  String
+  nameUz      String
+  nameRu      String?
+  minSelect   Int        @default(0)
+  maxSelect   Int        @default(1)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  deletedAt   DateTime?
+  version     Int        @default(1)
+  syncedAt    DateTime?
+  deviceId    String?
+
+  menuItem    MenuItem   @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  modifiers   Modifier[]
+
+  @@map("modifier_groups")
+}
+
+model Modifier {
+  id              String        @id
+  modifierGroupId String
+  nameUz          String
+  nameRu          String?
+  price           Int           @default(0) // so'm (+ narx)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  deletedAt       DateTime?
+  version         Int           @default(1)
+  syncedAt        DateTime?
+  deviceId        String?
+
+  modifierGroup   ModifierGroup @relation(fields: [modifierGroupId], references: [id], onDelete: Cascade)
+
+  @@map("modifiers")
+}
+
+model Ingredient {
+  id          String          @id
+  branchId    String
+  name        String
+  unit        Unit            @default(KG)
+  minQty      Float           @default(0)
+  currentQty  Float           @default(0)
+  avgCost     Int             @default(0) // 1 birlik o'rtacha xarid narxi
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  deletedAt   DateTime?
+  version     Int             @default(1)
+  syncedAt    DateTime?
+  deviceId    String?
+
+  branch      Branch          @relation(fields: [branchId], references: [id])
+  recipeItems RecipeItem[]
+  movements   StockMovement[]
+
+  @@map("ingredients")
+}
+
+model Recipe {
+  id          String       @id
+  menuItemId  String       @unique
+  description String?
+  isActive    Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  deletedAt   DateTime?
+  version     Int          @default(1)
+  syncedAt    DateTime?
+  deviceId    String?
+
+  menuItem    MenuItem     @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  items       RecipeItem[]
+
+  @@map("recipes")
+}
+
+model RecipeItem {
+  id           String     @id
+  recipeId     String
+  ingredientId String
+  quantity     Float      // porsiyaga kerak bo'lgan miqdor (masalan 0.15 kg)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  deletedAt    DateTime?
+  version      Int        @default(1)
+  syncedAt     DateTime?
+  deviceId     String?
+
+  recipe       Recipe     @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+
+  @@map("recipe_items")
+}
+
+model StockMovement {
+  id           String            @id
+  branchId     String
+  ingredientId String
+  type         StockMovementType
+  quantity     Float
+  unitPrice    Int               @default(0) // so'm
+  totalPrice   Int               @default(0) // so'm
+  reason       String?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  deletedAt    DateTime?
+  version      Int               @default(1)
+  syncedAt     DateTime?
+  deviceId     String?
+
+  branch       Branch            @relation(fields: [branchId], references: [id])
+  ingredient   Ingredient        @relation(fields: [ingredientId], references: [id])
+
+  @@map("stock_movements")
+}
+
+model Supplier {
+  id          String    @id
+  branchId    String
+  name        String
+  phone       String?
+  company     String?
+  address     String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  version     Int       @default(1)
+  syncedAt    DateTime?
+  deviceId    String?
+
+  branch      Branch    @relation(fields: [branchId], references: [id])
+
+  @@map("suppliers")
+}
+
+model Hall {
+  id        String    @id
+  branchId  String
+  name      String
+  sortOrder Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  version   Int       @default(1)
+  syncedAt  DateTime?
+  deviceId  String?
+
+  branch    Branch    @relation(fields: [branchId], references: [id])
+  tables    Table[]
+
+  @@map("halls")
+}
+
+model Table {
+  id        String      @id
+  hallId    String
+  number    Int
+  name      String?
+  seats     Int         @default(4)
+  status    TableStatus @default(VACANT)
+  posX      Int         @default(0)
+  posY      Int         @default(0)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  deletedAt DateTime?
+  version   Int         @default(1)
+  syncedAt  DateTime?
+  deviceId  String?
+
+  hall      Hall        @relation(fields: [hallId], references: [id], onDelete: Cascade)
+  orders    Order[]
+
+  @@map("tables")
+}
+
+model Order {
+  id          String      @id
+  branchId    String
+  orderNumber String      // K1-0425-0037 kabi
+  type        OrderType   @default(DINE_IN)
+  status      OrderStatus @default(OPEN)
+  tableId     String?
+  cashierId   String
+  waiterId    String?
+  guestCount  Int         @default(1)
+  subtotal    Int         @default(0) // taomlar jami
+  serviceFee  Int         @default(0) // xizmat haqi
+  discount    Int         @default(0) // chegirma summasi
+  total       Int         @default(0) // yakuniy to'lov summasi
+  notes       String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  deletedAt   DateTime?
+  version     Int         @default(1)
+  syncedAt    DateTime?
+  deviceId    String?
+
+  branch      Branch      @relation(fields: [branchId], references: [id])
+  table       Table?      @relation(fields: [tableId], references: [id])
+  cashier     User        @relation("CashierOrders", fields: [cashierId], references: [id])
+  waiter      User?       @relation("WaiterOrders", fields: [waiterId], references: [id])
+  items       OrderItem[]
+  payments    Payment[]
+  receipts    Receipt[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id                String          @id
+  orderId           String
+  menuItemId        String
+  variantId         String?
+  quantity          Float           @default(1)
+  unitPrice         Int             // sotuv paytidagi narx muzlatilgan
+  totalPrice        Int             // quantity * unitPrice + modifiers
+  selectedModifiers Json?           // tanlangan qo'shimchalar [{ name, price }]
+  status            OrderItemStatus @default(PENDING)
+  notes             String?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  deletedAt         DateTime?
+  version           Int             @default(1)
+  syncedAt          DateTime?
+  deviceId          String?
+
+  order             Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  menuItem          MenuItem        @relation(fields: [menuItemId], references: [id])
+  variant           MenuItemVariant? @relation(fields: [variantId], references: [id])
+
+  @@map("order_items")
+}
+
+model Payment {
+  id               String            @id
+  branchId         String
+  orderId          String
+  shiftId          String?
+  customerId       String?
+  method           PaymentMethod
+  amount           Int               // to'langan summa
+  change           Int               @default(0) // qaytim
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  deletedAt        DateTime?
+  version          Int               @default(1)
+  syncedAt         DateTime?
+  deviceId         String?
+
+  branch           Branch            @relation(fields: [branchId], references: [id])
+  order            Order             @relation(fields: [orderId], references: [id])
+  shift            Shift?            @relation(fields: [shiftId], references: [id])
+  customer         Customer?         @relation(fields: [customerId], references: [id])
+  debtTransactions DebtTransaction[]
+
+  @@map("payments")
+}
+
+model Receipt {
+  id            String      @id
+  orderId       String
+  receiptNumber String
+  type          ReceiptType @default(SALE)
+  printCount    Int         @default(1)
+  rawPayload    String?     // ESC/POS buyruqlari yoki matn ko'rinishi
+  printedAt     DateTime    @default(now())
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  deletedAt     DateTime?
+  version       Int         @default(1)
+  syncedAt      DateTime?
+  deviceId      String?
+
+  order         Order       @relation(fields: [orderId], references: [id])
+
+  @@map("receipts")
+}
+
+model Shift {
+  id              String         @id
+  branchId        String
+  cashierId       String
+  openedAt        DateTime       @default(now())
+  closedAt        DateTime?
+  startCash       Int            @default(0)
+  endCashExpected Int            @default(0)
+  endCashActual   Int            @default(0)
+  cashDifference  Int            @default(0)
+  notes           String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  deletedAt       DateTime?
+  version         Int            @default(1)
+  syncedAt        DateTime?
+  deviceId        String?
+
+  branch          Branch         @relation(fields: [branchId], references: [id])
+  cashier         User           @relation(fields: [cashierId], references: [id])
+  payments        Payment[]
+  cashMovements   CashMovement[]
+
+  @@map("shifts")
+}
+
+model CashMovement {
+  id        String           @id
+  branchId  String
+  shiftId   String
+  type      CashMovementType
+  amount    Int
+  reason    String
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  deletedAt DateTime?
+  version   Int              @default(1)
+  syncedAt  DateTime?
+  deviceId  String?
+
+  branch    Branch           @relation(fields: [branchId], references: [id])
+  shift     Shift            @relation(fields: [shiftId], references: [id])
+
+  @@map("cash_movements")
+}
+
+model Customer {
+  id          String            @id
+  branchId    String
+  name        String
+  phone       String?           @unique
+  debtBalance Int               @default(0) // joriy qarz balansi
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  deletedAt   DateTime?
+  version     Int               @default(1)
+  syncedAt    DateTime?
+  deviceId    String?
+
+  branch      Branch            @relation(fields: [branchId], references: [id])
+  payments    Payment[]
+  debts       DebtTransaction[]
+
+  @@map("customers")
+}
+
+model DebtTransaction {
+  id         String    @id
+  branchId   String
+  customerId String
+  paymentId  String?
+  type       String    // INCREASE (qarz olish), DECREASE (qarz to'lash)
+  amount     Int
+  note       String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
+  version    Int       @default(1)
+  syncedAt   DateTime?
+  deviceId   String?
+
+  branch     Branch    @relation(fields: [branchId], references: [id])
+  customer   Customer  @relation(fields: [customerId], references: [id])
+  payment    Payment?  @relation(fields: [paymentId], references: [id])
+
+  @@map("debt_transactions")
+}
+
+model Discount {
+  id        String    @id
+  branchId  String
+  name      String
+  type      String    // PERCENT yoki FIXED
+  value     Int
+  code      String?
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  version   Int       @default(1)
+  syncedAt  DateTime?
+  deviceId  String?
+
+  branch    Branch    @relation(fields: [branchId], references: [id])
+
+  @@map("discounts")
+}
+
+model PriceHistory {
+  id              String    @id
+  menuItemId      String
+  oldPrice        Int
+  newPrice        Int
+  changedByUserId String
+  reason          String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  deletedAt       DateTime?
+  version         Int       @default(1)
+  syncedAt        DateTime?
+  deviceId        String?
+
+  menuItem        MenuItem  @relation(fields: [menuItemId], references: [id])
+  changedByUser   User      @relation(fields: [changedByUserId], references: [id])
+
+  @@map("price_histories")
+}
+
+model Printer {
+  id         String      @id
+  branchId   String
+  name       String
+  type       PrinterType @default(NETWORK)
+  address    String      // IP manzil yoki USB identifikator
+  paperWidth Int         @default(80) // 58 yoki 80
+  station    String      // MAIN, KITCHEN_HOT, KITCHEN_COLD, BAR
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  deletedAt  DateTime?
+  version    Int         @default(1)
+  syncedAt   DateTime?
+  deviceId   String?
+
+  branch     Branch      @relation(fields: [branchId], references: [id])
+
+  @@map("printers")
+}
+
+model Setting {
+  id        String    @id
+  branchId  String
+  key       String
+  value     String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  version   Int       @default(1)
+  syncedAt  DateTime?
+  deviceId  String?
+
+  branch    Branch    @relation(fields: [branchId], references: [id])
+
+  @@unique([branchId, key])
+  @@map("settings")
+}
+
+model AuditLog {
+  id        String    @id
+  branchId  String
+  userId    String?
+  action    String
+  entity    String
+  entityId  String?
+  details   Json?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  version   Int       @default(1)
+  syncedAt  DateTime?
+  deviceId  String?
+
+  branch    Branch    @relation(fields: [branchId], references: [id])
+  user      User?     @relation(fields: [userId], references: [id])
+
+  @@map("audit_logs")
+}
+
+model SyncQueue {
+  id        String        @id
+  branchId  String
+  entity    String
+  entityId  String
+  operation SyncOperation
+  payload   Json
+  status    SyncStatus    @default(PENDING)
+  attempts  Int           @default(0)
+  lastError String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  deletedAt DateTime?
+  version   Int           @default(1)
+  syncedAt  DateTime?
+  deviceId  String?
+
+  branch    Branch        @relation(fields: [branchId], references: [id])
+
+  @@map("sync_queue")
+}

@@ -1,0 +1,22 @@
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Monorepo paketlarini tayyorlash
+COPY package.json pnpm-workspace.yaml turbo.json ./
+COPY packages ./packages
+COPY apps/local-server ./apps/local-server
+
+RUN npm install -g pnpm
+RUN pnpm install --frozen-lockfile=false
+RUN pnpm --filter @oshxona/db run db:generate
+RUN pnpm --filter @oshxona/local-server run build
+
+FROM node:20-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+
+COPY --from=builder /app ./
+
+EXPOSE 4000
+CMD ["node", "apps/local-server/dist/main.js"]
