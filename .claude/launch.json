@@ -2,6 +2,31 @@
   "version": "0.0.1",
   "configurations": [
     {
+      "name": "local-server",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--dir",
+        "apps/local-server",
+        "exec",
+        "nest",
+        "start"
+      ],
+      "port": 4000
+    },
+    {
+      "name": "pos",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--dir",
+        "apps/pos-desktop",
+        "exec",
+        "vite",
+        "--port",
+        "5173"
+      ],
+      "port": 5173
+    },
+    {
       "name": "backend",
       "runtimeExecutable": "restopro/backend/.venv/bin/python",
       "runtimeArgs": [

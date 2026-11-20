@@ -54,11 +54,11 @@ export default function DebtsPage() {
             placeholder="Mijoz ismi yoki telefon raqami..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white"
+            className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#0F9D8A] bg-white"
           />
         </div>
 
-        <button className="flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-xl text-xs font-semibold shadow-md shadow-orange-600/20 transition-all">
+        <button className="flex items-center gap-2 bg-[#0F9D8A] hover:bg-[#0D8A79] text-white px-4 py-2 rounded-xl text-xs font-semibold transition-colors">
           <Plus className="w-4 h-4" />
           Yangi Qarzdor Qo'shish
         </button>

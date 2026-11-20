@@ -2,8 +2,8 @@ import './globals.css';
 import { Sidebar } from '../components/sidebar';
 
 export const metadata = {
-  title: 'OshxonaPOS — Boshqaruv va Tahlil Paneli',
-  description: 'Restoran va Oshxona boshqaruv tizimi (Admin Web Panel)',
+  title: 'OshxonaPOS — Restoran Boshqaruv va Kassa Tizimi',
+  description: 'Oddiy va qulay restoran POS hamda boshqaruv paneli (Online + Offline)',
 };
 
 export default function RootLayout({
@@ -13,9 +13,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="uz">
-      <body className="flex min-h-screen bg-slate-50 text-slate-900 antialiased">
+      <body className="flex flex-col lg:flex-row min-h-screen bg-[#F4F6F8] text-slate-900 antialiased">
         <Sidebar />
-        <main className="flex-1 p-8 overflow-y-auto">
+        <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-7 overflow-y-auto">
           {children}
         </main>
       </body>

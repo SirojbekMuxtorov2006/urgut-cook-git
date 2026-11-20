@@ -6,8 +6,60 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+:root {
+  --pos-bg: #f4f6f8;
+  --pos-surface: #ffffff;
+  --pos-primary: #0f9d8a;
+  --pos-primary-hover: #0d8a79;
+  --pos-border: #e5e7eb;
+  --pos-text: #1e293b;
+  --pos-muted: #64748b;
+}
+
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, sans-serif;
+  background-color: var(--pos-bg);
+  color: var(--pos-text);
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Clean thin scrollbars for touch & desktop POS */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #pos-receipt-printable,
+  #pos-receipt-printable * {
+    visibility: visible;
+  }
+  #pos-receipt-printable {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 80mm;
+    padding: 8px;
+    background: #fff;
+    border: none !important;
+    box-shadow: none !important;
+  }
 }

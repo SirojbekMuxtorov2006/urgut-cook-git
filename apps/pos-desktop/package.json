@@ -2,12 +2,43 @@
   "name": "@oshxona/pos-desktop",
   "version": "1.0.0",
   "private": true,
+  "description": "OshxonaPOS — Restoran Kassa Dasturi (Windows / macOS, Online + Offline)",
   "main": "dist-electron/main.js",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "electron:dev": "vite",
-    "electron:build": "vite build && electron-builder"
+    "electron:build": "vite build && electron-builder",
+    "electron:build:win": "vite build && electron-builder --win nsis portable"
+  },
+  "build": {
+    "appId": "uz.oshxonapos.desktop",
+    "productName": "OshxonaPOS",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "dist-electron/**/*"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        },
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
   },
   "dependencies": {
     "@oshxona/shared": "workspace:*",
