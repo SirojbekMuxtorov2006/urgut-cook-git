@@ -1,0 +1,50 @@
+{
+  "nav": {
+    "dashboard": "Bosh sahifa",
+    "branches": "Filiallar",
+    "employees": "Xodimlar",
+    "roles": "Rollar va huquqlar",
+    "devices": "Qurilmalar",
+    "audit": "Audit jurnali",
+    "settings": "Sozlamalar",
+    "menu": "Menyu",
+    "tables": "Zal va stollar",
+    "orders": "Buyurtmalar",
+    "inventory": "Ombor",
+    "reports": "Hisobotlar",
+    "soon": "tez orada"
+  },
+  "auth": {
+    "login": "Kirish",
+    "phone": "Telefon raqam",
+    "password": "Parol",
+    "noAccount": "Hisobingiz yo'qmi?",
+    "register": "Ro'yxatdan o'tish",
+    "haveAccount": "Hisobingiz bormi?",
+    "sendCode": "SMS kod yuborish",
+    "code": "SMS kod",
+    "companyName": "Restoran nomi",
+    "businessType": "Biznes turi",
+    "fullName": "Ismingiz",
+    "create": "Ro'yxatdan o'tish va boshlash",
+    "logout": "Chiqish",
+    "codeSent": "Kod {phone} raqamiga yuborildi"
+  },
+  "common": {
+    "save": "Saqlash",
+    "cancel": "Bekor qilish",
+    "add": "Qo'shish",
+    "edit": "Tahrirlash",
+    "delete": "O'chirish",
+    "search": "Qidirish...",
+    "export": "Eksport (CSV)",
+    "columns": "Ustunlar",
+    "loading": "Yuklanmoqda...",
+    "empty": "Ma'lumot yo'q",
+    "confirmDelete": "Rostdan o'chirilsinmi?",
+    "active": "Faol",
+    "inactive": "Nofaol",
+    "online": "Onlayn",
+    "offline": "Oflayn"
+  }
+}

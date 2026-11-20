@@ -1,0 +1,2691 @@
+openapi: 3.0.3
+info:
+  title: RestoPro API
+  version: 1.0.0
+  description: Restoran, oshxona va kafe boshqaruv tizimi (multi-tenant SaaS)
+paths:
+  /api/v1/auth/audit-logs/:
+    get:
+      operationId: auth_audit_logs_list
+      description: |-
+        Tenant izolyatsiyasining ikkinchi qatlami.
+
+        Manager allaqachon kontekst bo'yicha filtrlaydi; bu yerda esa so'rovdagi
+        company bo'yicha aniq filtr qo'yiladi va yangi yozuvga company/branch
+        majburan o'rnatiladi (mijoz yuborgan company_id e'tiborga olinmaydi).
+      parameters:
+      - in: query
+        name: action
+        schema:
+          type: string
+      - in: query
+        name: branch
+        schema:
+          type: string
+          format: uuid
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - in: query
+        name: device
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: entity
+        schema:
+          type: string
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: severity
+        schema:
+          type: string
+          enum:
+          - CRITICAL
+          - INFO
+          - WARNING
+        description: |-
+          * `INFO` - Info
+          * `WARNING` - Warning
+          * `CRITICAL` - Critical
+      - in: query
+        name: user
+        schema:
+          type: string
+          format: uuid
+      tags:
+      - auth
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAuditLogList'
+          description: ''
+  /api/v1/auth/audit-logs/{id}/:
+    get:
+      operationId: auth_audit_logs_retrieve
+      description: |-
+        Tenant izolyatsiyasining ikkinchi qatlami.
+
+        Manager allaqachon kontekst bo'yicha filtrlaydi; bu yerda esa so'rovdagi
+        company bo'yicha aniq filtr qo'yiladi va yangi yozuvga company/branch
+        majburan o'rnatiladi (mijoz yuborgan company_id e'tiborga olinmaydi).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this audit log.
+        required: true
+      tags:
+      - auth
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditLog'
+          description: ''
+  /api/v1/auth/devices/register/:
+    post:
+      operationId: auth_devices_register_create
+      description: |-
+        Qurilmani ro'yxatdan o'tkazish: ega/menejer bir marta telefon+parol bilan kiradi,
+        qurilma rejimi tanlanadi va doimiy qurilma tokeni beriladi.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceRegisterRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DeviceRegisterRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DeviceRegisterRequest'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceRegisterResponse'
+          description: ''
+  /api/v1/auth/employees/:
+    get:
+      operationId: auth_employees_list
+      description: |-
+        Tenant izolyatsiyasining ikkinchi qatlami.
+
+        Manager allaqachon kontekst bo'yicha filtrlaydi; bu yerda esa so'rovdagi
+        company bo'yicha aniq filtr qo'yiladi va yangi yozuvga company/branch
+        majburan o'rnatiladi (mijoz yuborgan company_id e'tiborga olinmaydi).
+      parameters:
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - in: query
+        name: role
+        schema:
+          type: string
+          format: uuid
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - auth
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Employee'
+          description: ''
+    post:
+      operationId: auth_employees_create
+      description: |-
+        Tenant izolyatsiyasining ikkinchi qatlami.
+
+        Manager allaqachon kontekst bo'yicha filtrlaydi; bu yerda esa so'rovdagi
+        company bo'yicha aniq filtr qo'yiladi va yangi yozuvga company/branch
+        majburan o'rnatiladi (mijoz yuborgan company_id e'tiborga olinmaydi).
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmployeeRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EmployeeRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EmployeeRequest'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+          description: ''
+  /api/v1/auth/employees/{id}/:
+    get:
+      operationId: auth_employees_retrieve
+      description: |-
+        Tenant izolyatsiyasining ikkinchi qatlami.
+
+        Manager allaqachon kontekst bo'yicha filtrlaydi; bu yerda esa so'rovdagi
+        company bo'yicha aniq filtr qo'yiladi va yangi yozuvga company/branch
+        majburan o'rnatiladi (mijoz yuborgan company_id e'tiborga olinmaydi).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this user.
+        required: true
+      tags:
+      - auth
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+          description: ''
+    put:
+      operationId: auth_employees_update
+      description: |-
+        Tenant izolyatsiyasining ikkinchi qatlami.
+
+        Manager allaqachon kontekst bo'yicha filtrlaydi; bu yerda esa so'rovdagi
+        company bo'yicha aniq filtr qo'yiladi va yangi yozuvga company/branch
+        majburan o'rnatiladi (mijoz yuborgan company_id e'tiborga olinmaydi).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this user.
+        required: true
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmployeeRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EmployeeRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EmployeeRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+          description: ''
+    patch:
+      operationId: auth_employees_partial_update
+      description: |-
+        Tenant izolyatsiyasining ikkinchi qatlami.
+
+        Manager allaqachon kontekst bo'yicha filtrlaydi; bu yerda esa so'rovdagi
+        company bo'yicha aniq filtr qo'yiladi va yangi yozuvga company/branch
+        majburan o'rnatiladi (mijoz yuborgan company_id e'tiborga olinmaydi).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this user.
+        required: true
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedEmployeeRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedEmployeeRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedEmployeeRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+          description: ''
+    delete:
+      operationId: auth_employees_destroy
+      description: |-
+        Tenant izolyatsiyasining ikkinchi qatlami.
+
+        Manager allaqachon kontekst bo'yicha filtrlaydi; bu yerda esa so'rovdagi
+        company bo'yicha aniq filtr qo'yiladi va yangi yozuvga company/branch
+        majburan o'rnatiladi (mijoz yuborgan company_id e'tiborga olinmaydi).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this user.
+        required: true
+      tags:
+      - auth
+      responses:
+        '204':
+          description: No response body
+  /api/v1/auth/login/:
+    post:
+      operationId: auth_login_create
+      description: Telefon + parol (ega, menejer, omborchi, buxgalter).
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+          description: ''
+  /api/v1/auth/logout/:
+    post:
+      operationId: auth_logout_create
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refresh:
+                  type: string
+      responses:
+        '204':
+          description: No response body
+  /api/v1/auth/manager-pin/:
+    post:
+      operationId: auth_manager_pin_create
+      description: Menejer PIN tasdig'i (oshxonaga yuborilganni bekor qilish, qaytarish
+        va h.k.).
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManagerPinRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ManagerPinRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ManagerPinRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/auth/me/:
+    get:
+      operationId: auth_me_retrieve
+      tags:
+      - auth
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Me'
+          description: ''
+    patch:
+      operationId: auth_me_partial_update
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedMeRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedMeRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedMeRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Me'
+          description: ''
+  /api/v1/auth/password/reset/:
+    post:
+      operationId: auth_password_reset_create
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+          description: ''
+  /api/v1/auth/password/send-code/:
+    post:
+      operationId: auth_password_send_code_create
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendCodeRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SendCodeRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SendCodeRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/auth/permissions/:
+    get:
+      operationId: auth_permissions_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - auth
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Permission'
+          description: ''
+  /api/v1/auth/pin-login/:
+    post:
+      operationId: auth_pin_login_create
+      description: Kassa/ofitsiant qurilmasida PIN bilan kirish. X-Device-Token sarlavhasi
+        shart.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PinLoginRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PinLoginRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PinLoginRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+          description: ''
+  /api/v1/auth/pin-users/:
+    get:
+      operationId: auth_pin_users_retrieve
+      description: Qurilma ekranida ko'rsatish uchun PIN bilan kiradigan xodimlar
+        ro'yxati (ism, rol).
+      tags:
+      - auth
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/auth/refresh/:
+    post:
+      operationId: auth_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+  /api/v1/auth/register/:
+    post:
+      operationId: auth_register_create
+      description: '2-qadam: SMS kodni tasdiqlash + kompaniya, filial, ega va shablon
+        yaratish.'
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+          description: ''
+  /api/v1/auth/register/send-code/:
+    post:
+      operationId: auth_register_send_code_create
+      description: '1-qadam: telefon raqamga SMS kod yuborish.'
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendCodeRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SendCodeRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SendCodeRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/auth/roles/:
+    get:
+      operationId: auth_roles_list
+      description: |-
+        Tenant izolyatsiyasining ikkinchi qatlami.
+
+        Manager allaqachon kontekst bo'yicha filtrlaydi; bu yerda esa so'rovdagi
+        company bo'yicha aniq filtr qo'yiladi va yangi yozuvga company/branch
+        majburan o'rnatiladi (mijoz yuborgan company_id e'tiborga olinmaydi).
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - auth
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Role'
+          description: ''
+    post:
+      operationId: auth_roles_create
+      description: |-
+        Tenant izolyatsiyasining ikkinchi qatlami.
+
+        Manager allaqachon kontekst bo'yicha filtrlaydi; bu yerda esa so'rovdagi
+        company bo'yicha aniq filtr qo'yiladi va yangi yozuvga company/branch
+        majburan o'rnatiladi (mijoz yuborgan company_id e'tiborga olinmaydi).
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoleRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RoleRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RoleRequest'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+          description: ''
+  /api/v1/auth/roles/{id}/:
+    get:
+      operationId: auth_roles_retrieve
+      description: |-
+        Tenant izolyatsiyasining ikkinchi qatlami.
+
+        Manager allaqachon kontekst bo'yicha filtrlaydi; bu yerda esa so'rovdagi
+        company bo'yicha aniq filtr qo'yiladi va yangi yozuvga company/branch
+        majburan o'rnatiladi (mijoz yuborgan company_id e'tiborga olinmaydi).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this role.
+        required: true
+      tags:
+      - auth
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+          description: ''
+    put:
+      operationId: auth_roles_update
+      description: |-
+        Tenant izolyatsiyasining ikkinchi qatlami.
+
+        Manager allaqachon kontekst bo'yicha filtrlaydi; bu yerda esa so'rovdagi
+        company bo'yicha aniq filtr qo'yiladi va yangi yozuvga company/branch
+        majburan o'rnatiladi (mijoz yuborgan company_id e'tiborga olinmaydi).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this role.
+        required: true
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoleRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RoleRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RoleRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+          description: ''
+    patch:
+      operationId: auth_roles_partial_update
+      description: |-
+        Tenant izolyatsiyasining ikkinchi qatlami.
+
+        Manager allaqachon kontekst bo'yicha filtrlaydi; bu yerda esa so'rovdagi
+        company bo'yicha aniq filtr qo'yiladi va yangi yozuvga company/branch
+        majburan o'rnatiladi (mijoz yuborgan company_id e'tiborga olinmaydi).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this role.
+        required: true
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedRoleRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedRoleRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedRoleRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+          description: ''
+    delete:
+      operationId: auth_roles_destroy
+      description: |-
+        Tenant izolyatsiyasining ikkinchi qatlami.
+
+        Manager allaqachon kontekst bo'yicha filtrlaydi; bu yerda esa so'rovdagi
+        company bo'yicha aniq filtr qo'yiladi va yangi yozuvga company/branch
+        majburan o'rnatiladi (mijoz yuborgan company_id e'tiborga olinmaydi).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this role.
+        required: true
+      tags:
+      - auth
+      responses:
+        '204':
+          description: No response body
+  /api/v1/auth/verify-sms/:
+    post:
+      operationId: auth_verify_sms_create
+      description: '2-qadam: SMS kodni tasdiqlash + kompaniya, filial, ega va shablon
+        yaratish.'
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+          description: ''
+  /api/v1/health/:
+    get:
+      operationId: health_retrieve
+      tags:
+      - health
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/tenancy/branches/:
+    get:
+      operationId: tenancy_branches_list
+      description: |-
+        Tenant izolyatsiyasining ikkinchi qatlami.
+
+        Manager allaqachon kontekst bo'yicha filtrlaydi; bu yerda esa so'rovdagi
+        company bo'yicha aniq filtr qo'yiladi va yangi yozuvga company/branch
+        majburan o'rnatiladi (mijoz yuborgan company_id e'tiborga olinmaydi).
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - tenancy
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Branch'
+          description: ''
+    post:
+      operationId: tenancy_branches_create
+      description: |-
+        Tenant izolyatsiyasining ikkinchi qatlami.
+
+        Manager allaqachon kontekst bo'yicha filtrlaydi; bu yerda esa so'rovdagi
+        company bo'yicha aniq filtr qo'yiladi va yangi yozuvga company/branch
+        majburan o'rnatiladi (mijoz yuborgan company_id e'tiborga olinmaydi).
+      tags:
+      - tenancy
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BranchRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/BranchRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BranchRequest'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Branch'
+          description: ''
+  /api/v1/tenancy/branches/{id}/:
+    get:
+      operationId: tenancy_branches_retrieve
+      description: |-
+        Tenant izolyatsiyasining ikkinchi qatlami.
+
+        Manager allaqachon kontekst bo'yicha filtrlaydi; bu yerda esa so'rovdagi
+        company bo'yicha aniq filtr qo'yiladi va yangi yozuvga company/branch
+        majburan o'rnatiladi (mijoz yuborgan company_id e'tiborga olinmaydi).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this branch.
+        required: true
+      tags:
+      - tenancy
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Branch'
+          description: ''
+    put:
+      operationId: tenancy_branches_update
+      description: |-
+        Tenant izolyatsiyasining ikkinchi qatlami.
+
+        Manager allaqachon kontekst bo'yicha filtrlaydi; bu yerda esa so'rovdagi
+        company bo'yicha aniq filtr qo'yiladi va yangi yozuvga company/branch
+        majburan o'rnatiladi (mijoz yuborgan company_id e'tiborga olinmaydi).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this branch.
+        required: true
+      tags:
+      - tenancy
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BranchRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/BranchRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BranchRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Branch'
+          description: ''
+    patch:
+      operationId: tenancy_branches_partial_update
+      description: |-
+        Tenant izolyatsiyasining ikkinchi qatlami.
+
+        Manager allaqachon kontekst bo'yicha filtrlaydi; bu yerda esa so'rovdagi
+        company bo'yicha aniq filtr qo'yiladi va yangi yozuvga company/branch
+        majburan o'rnatiladi (mijoz yuborgan company_id e'tiborga olinmaydi).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this branch.
+        required: true
+      tags:
+      - tenancy
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedBranchRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedBranchRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedBranchRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Branch'
+          description: ''
+    delete:
+      operationId: tenancy_branches_destroy
+      description: |-
+        Tenant izolyatsiyasining ikkinchi qatlami.
+
+        Manager allaqachon kontekst bo'yicha filtrlaydi; bu yerda esa so'rovdagi
+        company bo'yicha aniq filtr qo'yiladi va yangi yozuvga company/branch
+        majburan o'rnatiladi (mijoz yuborgan company_id e'tiborga olinmaydi).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this branch.
+        required: true
+      tags:
+      - tenancy
+      responses:
+        '204':
+          description: No response body
+  /api/v1/tenancy/company/:
+    get:
+      operationId: tenancy_company_retrieve
+      tags:
+      - tenancy
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Company'
+          description: ''
+    patch:
+      operationId: tenancy_company_partial_update
+      tags:
+      - tenancy
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCompanyRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCompanyRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCompanyRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Company'
+          description: ''
+  /api/v1/tenancy/devices/:
+    get:
+      operationId: tenancy_devices_list
+      description: |-
+        Tenant izolyatsiyasining ikkinchi qatlami.
+
+        Manager allaqachon kontekst bo'yicha filtrlaydi; bu yerda esa so'rovdagi
+        company bo'yicha aniq filtr qo'yiladi va yangi yozuvga company/branch
+        majburan o'rnatiladi (mijoz yuborgan company_id e'tiborga olinmaydi).
+      parameters:
+      - in: query
+        name: branch
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+      - in: query
+        name: mode
+        schema:
+          type: string
+          enum:
+          - COURIER
+          - HUB
+          - KDS
+          - MANAGER
+          - POS
+          - WAITER
+        description: |-
+          * `POS` - Kassa
+          * `HUB` - Asosiy kassa (lokal hub)
+          * `WAITER` - Ofitsiant
+          * `KDS` - Oshxona ekrani
+          * `MANAGER` - Boshqaruv
+          * `COURIER` - Kuryer
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - tenancy
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Device'
+          description: ''
+    post:
+      operationId: tenancy_devices_create
+      description: |-
+        Tenant izolyatsiyasining ikkinchi qatlami.
+
+        Manager allaqachon kontekst bo'yicha filtrlaydi; bu yerda esa so'rovdagi
+        company bo'yicha aniq filtr qo'yiladi va yangi yozuvga company/branch
+        majburan o'rnatiladi (mijoz yuborgan company_id e'tiborga olinmaydi).
+      tags:
+      - tenancy
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DeviceRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DeviceRequest'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+          description: ''
+  /api/v1/tenancy/devices/{id}/:
+    get:
+      operationId: tenancy_devices_retrieve
+      description: |-
+        Tenant izolyatsiyasining ikkinchi qatlami.
+
+        Manager allaqachon kontekst bo'yicha filtrlaydi; bu yerda esa so'rovdagi
+        company bo'yicha aniq filtr qo'yiladi va yangi yozuvga company/branch
+        majburan o'rnatiladi (mijoz yuborgan company_id e'tiborga olinmaydi).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this device.
+        required: true
+      tags:
+      - tenancy
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+          description: ''
+    patch:
+      operationId: tenancy_devices_partial_update
+      description: |-
+        Tenant izolyatsiyasining ikkinchi qatlami.
+
+        Manager allaqachon kontekst bo'yicha filtrlaydi; bu yerda esa so'rovdagi
+        company bo'yicha aniq filtr qo'yiladi va yangi yozuvga company/branch
+        majburan o'rnatiladi (mijoz yuborgan company_id e'tiborga olinmaydi).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this device.
+        required: true
+      tags:
+      - tenancy
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedDeviceRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedDeviceRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedDeviceRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+          description: ''
+    delete:
+      operationId: tenancy_devices_destroy
+      description: |-
+        Tenant izolyatsiyasining ikkinchi qatlami.
+
+        Manager allaqachon kontekst bo'yicha filtrlaydi; bu yerda esa so'rovdagi
+        company bo'yicha aniq filtr qo'yiladi va yangi yozuvga company/branch
+        majburan o'rnatiladi (mijoz yuborgan company_id e'tiborga olinmaydi).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this device.
+        required: true
+      tags:
+      - tenancy
+      responses:
+        '204':
+          description: No response body
+  /api/v1/tenancy/devices/{id}/revoke/:
+    post:
+      operationId: tenancy_devices_revoke_create
+      description: Qurilma tokenini bekor qilish (yo'qolgan/o'g'irlangan planshet).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this device.
+        required: true
+      tags:
+      - tenancy
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+          description: ''
+  /api/v1/tenancy/heartbeat/:
+    post:
+      operationId: tenancy_heartbeat_create
+      description: 'Qurilma holati: oxirgi faollik va lokal IP (hub topish uchun).'
+      tags:
+      - tenancy
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                local_ip:
+                  type: string
+                app_version:
+                  type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/tenancy/license/:
+    get:
+      operationId: tenancy_license_retrieve
+      description: Offline litsenziya tokenini yangilash (qurilma internet bo'lganda
+        chaqiradi).
+      tags:
+      - tenancy
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/License'
+          description: ''
+  /api/v1/tenancy/plans/:
+    get:
+      operationId: tenancy_plans_list
+      description: Tariflar (ochiq — ro'yxatdan o'tish sahifasi uchun).
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - tenancy
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Plan'
+          description: ''
+  /api/v1/tenancy/settings/:
+    get:
+      operationId: tenancy_settings_list
+      description: |-
+        Tenant izolyatsiyasining ikkinchi qatlami.
+
+        Manager allaqachon kontekst bo'yicha filtrlaydi; bu yerda esa so'rovdagi
+        company bo'yicha aniq filtr qo'yiladi va yangi yozuvga company/branch
+        majburan o'rnatiladi (mijoz yuborgan company_id e'tiborga olinmaydi).
+      parameters:
+      - in: query
+        name: branch
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: key
+        schema:
+          type: string
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - tenancy
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Setting'
+          description: ''
+    post:
+      operationId: tenancy_settings_create
+      description: |-
+        Tenant izolyatsiyasining ikkinchi qatlami.
+
+        Manager allaqachon kontekst bo'yicha filtrlaydi; bu yerda esa so'rovdagi
+        company bo'yicha aniq filtr qo'yiladi va yangi yozuvga company/branch
+        majburan o'rnatiladi (mijoz yuborgan company_id e'tiborga olinmaydi).
+      tags:
+      - tenancy
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SettingRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SettingRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SettingRequest'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Setting'
+          description: ''
+  /api/v1/tenancy/settings/{id}/:
+    get:
+      operationId: tenancy_settings_retrieve
+      description: |-
+        Tenant izolyatsiyasining ikkinchi qatlami.
+
+        Manager allaqachon kontekst bo'yicha filtrlaydi; bu yerda esa so'rovdagi
+        company bo'yicha aniq filtr qo'yiladi va yangi yozuvga company/branch
+        majburan o'rnatiladi (mijoz yuborgan company_id e'tiborga olinmaydi).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this setting.
+        required: true
+      tags:
+      - tenancy
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Setting'
+          description: ''
+    put:
+      operationId: tenancy_settings_update
+      description: |-
+        Tenant izolyatsiyasining ikkinchi qatlami.
+
+        Manager allaqachon kontekst bo'yicha filtrlaydi; bu yerda esa so'rovdagi
+        company bo'yicha aniq filtr qo'yiladi va yangi yozuvga company/branch
+        majburan o'rnatiladi (mijoz yuborgan company_id e'tiborga olinmaydi).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this setting.
+        required: true
+      tags:
+      - tenancy
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SettingRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SettingRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SettingRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Setting'
+          description: ''
+    patch:
+      operationId: tenancy_settings_partial_update
+      description: |-
+        Tenant izolyatsiyasining ikkinchi qatlami.
+
+        Manager allaqachon kontekst bo'yicha filtrlaydi; bu yerda esa so'rovdagi
+        company bo'yicha aniq filtr qo'yiladi va yangi yozuvga company/branch
+        majburan o'rnatiladi (mijoz yuborgan company_id e'tiborga olinmaydi).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this setting.
+        required: true
+      tags:
+      - tenancy
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedSettingRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedSettingRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedSettingRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Setting'
+          description: ''
+    delete:
+      operationId: tenancy_settings_destroy
+      description: |-
+        Tenant izolyatsiyasining ikkinchi qatlami.
+
+        Manager allaqachon kontekst bo'yicha filtrlaydi; bu yerda esa so'rovdagi
+        company bo'yicha aniq filtr qo'yiladi va yangi yozuvga company/branch
+        majburan o'rnatiladi (mijoz yuborgan company_id e'tiborga olinmaydi).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this setting.
+        required: true
+      tags:
+      - tenancy
+      responses:
+        '204':
+          description: No response body
+  /api/v1/tenancy/subscription/:
+    get:
+      operationId: tenancy_subscription_retrieve
+      tags:
+      - tenancy
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+          description: ''
+components:
+  schemas:
+    AuditLog:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        action:
+          type: string
+          maxLength: 64
+        entity:
+          type: string
+          maxLength: 64
+        entity_id:
+          type: string
+          maxLength: 64
+        old_value:
+          nullable: true
+        new_value:
+          nullable: true
+        reason:
+          type: string
+          maxLength: 255
+        severity:
+          $ref: '#/components/schemas/SeverityEnum'
+        user:
+          type: string
+          format: uuid
+          nullable: true
+        user_name:
+          type: string
+          readOnly: true
+        device:
+          type: string
+          format: uuid
+          nullable: true
+        device_code:
+          type: string
+          readOnly: true
+        branch:
+          type: string
+          format: uuid
+          nullable: true
+        ip:
+          type: string
+          nullable: true
+      required:
+      - action
+      - created_at
+      - device_code
+      - id
+      - user_name
+    AuthResponse:
+      type: object
+      properties:
+        access:
+          type: string
+        refresh:
+          type: string
+        user:
+          $ref: '#/components/schemas/Me'
+      required:
+      - access
+      - refresh
+      - user
+    Branch:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 200
+        code:
+          type: string
+          description: Qisqa kod, masalan B1
+          maxLength: 10
+        address:
+          type: string
+          maxLength: 300
+        phone:
+          type: string
+          maxLength: 20
+        latitude:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,6})?$
+          nullable: true
+        longitude:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,6})?$
+          nullable: true
+        service_charge_percent:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+        receipt_header:
+          type: string
+        receipt_footer:
+          type: string
+        is_active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        version:
+          type: integer
+          readOnly: true
+      required:
+      - code
+      - created_at
+      - id
+      - name
+      - updated_at
+      - version
+    BranchBrief:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 200
+        code:
+          type: string
+          description: Qisqa kod, masalan B1
+          maxLength: 10
+      required:
+      - code
+      - id
+      - name
+    BranchRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 200
+        code:
+          type: string
+          minLength: 1
+          description: Qisqa kod, masalan B1
+          maxLength: 10
+        address:
+          type: string
+          maxLength: 300
+        phone:
+          type: string
+          maxLength: 20
+        latitude:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,6})?$
+          nullable: true
+        longitude:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,6})?$
+          nullable: true
+        service_charge_percent:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+        receipt_header:
+          type: string
+        receipt_footer:
+          type: string
+        is_active:
+          type: boolean
+      required:
+      - code
+      - name
+    BusinessTypeEnum:
+      enum:
+      - NATIONAL
+      - RESTAURANT
+      - CAFE
+      - FAST_FOOD
+      - DARK_KITCHEN
+      type: string
+      description: |-
+        * `NATIONAL` - Milliy oshxona (osh markazi, choyxona, somsaxona)
+        * `RESTAURANT` - Restoran / to'yxona
+        * `CAFE` - Kafe / kofeyniya
+        * `FAST_FOOD` - Fast-food (lavash, burger)
+        * `DARK_KITCHEN` - Yetkazib berish oshxonasi
+    Company:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 200
+        business_type:
+          allOf:
+          - $ref: '#/components/schemas/BusinessTypeEnum'
+          readOnly: true
+        phone:
+          type: string
+          maxLength: 20
+        legal_name:
+          type: string
+          maxLength: 200
+        inn:
+          type: string
+          title: STIR (INN)
+          maxLength: 20
+        logo:
+          type: string
+          format: uri
+          nullable: true
+        currency:
+          type: string
+          maxLength: 10
+        language:
+          type: string
+          maxLength: 5
+        status:
+          allOf:
+          - $ref: '#/components/schemas/StatusEnum'
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - business_type
+      - created_at
+      - id
+      - name
+      - phone
+      - status
+    Device:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        code:
+          type: string
+          readOnly: true
+          description: Hujjat raqami prefiksi, masalan K1
+        mode:
+          allOf:
+          - $ref: '#/components/schemas/ModeEnum'
+          readOnly: true
+        branch:
+          type: string
+          format: uuid
+          readOnly: true
+        branch_name:
+          type: string
+          readOnly: true
+        is_backup_hub:
+          type: boolean
+          description: Hub o'chsa vazifani oladi
+        platform:
+          type: string
+          readOnly: true
+        app_version:
+          type: string
+          readOnly: true
+        local_ip:
+          type: string
+          readOnly: true
+          nullable: true
+        last_seen_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        online:
+          type: boolean
+          readOnly: true
+        is_active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - app_version
+      - branch
+      - branch_name
+      - code
+      - created_at
+      - id
+      - last_seen_at
+      - local_ip
+      - mode
+      - name
+      - online
+      - platform
+    DeviceRegisterRequest:
+      type: object
+      properties:
+        branch:
+          type: string
+          format: uuid
+        mode:
+          $ref: '#/components/schemas/ModeEnum'
+        name:
+          type: string
+          maxLength: 100
+        platform:
+          type: string
+          maxLength: 20
+        app_version:
+          type: string
+          maxLength: 20
+        hardware_id:
+          type: string
+          maxLength: 128
+        is_backup_hub:
+          type: boolean
+          default: false
+      required:
+      - branch
+      - mode
+    DeviceRegisterResponse:
+      type: object
+      properties:
+        device_id:
+          type: string
+          format: uuid
+        device_code:
+          type: string
+        device_token:
+          type: string
+        mode:
+          type: string
+        branch:
+          $ref: '#/components/schemas/BranchBrief'
+        license:
+          type: object
+          additionalProperties: {}
+      required:
+      - branch
+      - device_code
+      - device_id
+      - device_token
+      - license
+      - mode
+    DeviceRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        is_backup_hub:
+          type: boolean
+          description: Hub o'chsa vazifani oladi
+        is_active:
+          type: boolean
+      required:
+      - name
+    Employee:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        full_name:
+          type: string
+          maxLength: 150
+        phone:
+          type: string
+          nullable: true
+          maxLength: 20
+        role:
+          type: string
+          format: uuid
+        role_name:
+          type: string
+          readOnly: true
+        branches:
+          type: array
+          items:
+            type: string
+            format: uuid
+        language:
+          type: string
+          maxLength: 5
+        is_active:
+          type: boolean
+        has_pin:
+          type: boolean
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - full_name
+      - has_pin
+      - id
+      - role
+      - role_name
+    EmployeeRequest:
+      type: object
+      properties:
+        full_name:
+          type: string
+          minLength: 1
+          maxLength: 150
+        phone:
+          type: string
+          nullable: true
+          maxLength: 20
+        role:
+          type: string
+          format: uuid
+        branches:
+          type: array
+          items:
+            type: string
+            format: uuid
+        language:
+          type: string
+          minLength: 1
+          maxLength: 5
+        is_active:
+          type: boolean
+        pin:
+          type: string
+          writeOnly: true
+          maxLength: 4
+          minLength: 4
+        password:
+          type: string
+          writeOnly: true
+          minLength: 6
+      required:
+      - full_name
+      - role
+    LanguageEnum:
+      enum:
+      - uz
+      - ru
+      type: string
+      description: |-
+        * `uz` - uz
+        * `ru` - ru
+    License:
+      type: object
+      properties:
+        token:
+          type: string
+        public_key:
+          type: string
+        payload:
+          type: object
+          additionalProperties: {}
+      required:
+      - payload
+      - public_key
+      - token
+    LoginRequest:
+      type: object
+      properties:
+        phone:
+          type: string
+          minLength: 1
+        password:
+          type: string
+          minLength: 1
+      required:
+      - password
+      - phone
+    LoginTypeEnum:
+      enum:
+      - pin
+      - password
+      type: string
+      description: |-
+        * `pin` - PIN (4 raqam)
+        * `password` - Telefon + parol
+    ManagerPinRequest:
+      type: object
+      properties:
+        pin:
+          type: string
+          minLength: 4
+          maxLength: 4
+        permission:
+          type: string
+          minLength: 1
+      required:
+      - permission
+      - pin
+    Me:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        phone:
+          type: string
+          readOnly: true
+          nullable: true
+        full_name:
+          type: string
+          maxLength: 150
+        language:
+          type: string
+          maxLength: 5
+        role:
+          allOf:
+          - $ref: '#/components/schemas/RoleBrief'
+          readOnly: true
+        permissions:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        branches:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+          readOnly: true
+        company:
+          type: object
+          additionalProperties: {}
+          nullable: true
+          readOnly: true
+        is_superuser:
+          type: boolean
+          readOnly: true
+          title: Superuser status
+          description: Designates that this user has all permissions without explicitly
+            assigning them.
+      required:
+      - branches
+      - company
+      - full_name
+      - id
+      - is_superuser
+      - permissions
+      - phone
+      - role
+    ModeEnum:
+      enum:
+      - POS
+      - HUB
+      - WAITER
+      - KDS
+      - MANAGER
+      - COURIER
+      type: string
+      description: |-
+        * `POS` - Kassa
+        * `HUB` - Asosiy kassa (lokal hub)
+        * `WAITER` - Ofitsiant
+        * `KDS` - Oshxona ekrani
+        * `MANAGER` - Boshqaruv
+        * `COURIER` - Kuryer
+    PaginatedAuditLogList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLog'
+    PatchedBranchRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 200
+        code:
+          type: string
+          minLength: 1
+          description: Qisqa kod, masalan B1
+          maxLength: 10
+        address:
+          type: string
+          maxLength: 300
+        phone:
+          type: string
+          maxLength: 20
+        latitude:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,6})?$
+          nullable: true
+        longitude:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,6})?$
+          nullable: true
+        service_charge_percent:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+        receipt_header:
+          type: string
+        receipt_footer:
+          type: string
+        is_active:
+          type: boolean
+    PatchedCompanyRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 200
+        phone:
+          type: string
+          minLength: 1
+          maxLength: 20
+        legal_name:
+          type: string
+          maxLength: 200
+        inn:
+          type: string
+          title: STIR (INN)
+          maxLength: 20
+        logo:
+          type: string
+          format: binary
+          nullable: true
+        currency:
+          type: string
+          minLength: 1
+          maxLength: 10
+        language:
+          type: string
+          minLength: 1
+          maxLength: 5
+    PatchedDeviceRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        is_backup_hub:
+          type: boolean
+          description: Hub o'chsa vazifani oladi
+        is_active:
+          type: boolean
+    PatchedEmployeeRequest:
+      type: object
+      properties:
+        full_name:
+          type: string
+          minLength: 1
+          maxLength: 150
+        phone:
+          type: string
+          nullable: true
+          maxLength: 20
+        role:
+          type: string
+          format: uuid
+        branches:
+          type: array
+          items:
+            type: string
+            format: uuid
+        language:
+          type: string
+          minLength: 1
+          maxLength: 5
+        is_active:
+          type: boolean
+        pin:
+          type: string
+          writeOnly: true
+          maxLength: 4
+          minLength: 4
+        password:
+          type: string
+          writeOnly: true
+          minLength: 6
+    PatchedMeRequest:
+      type: object
+      properties:
+        full_name:
+          type: string
+          minLength: 1
+          maxLength: 150
+        language:
+          type: string
+          minLength: 1
+          maxLength: 5
+    PatchedRoleRequest:
+      type: object
+      properties:
+        code:
+          type: string
+          minLength: 1
+          maxLength: 50
+          pattern: ^[-a-zA-Z0-9_]+$
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        login_type:
+          $ref: '#/components/schemas/LoginTypeEnum'
+        permissions:
+          type: array
+          items:
+            type: string
+            minLength: 1
+        discount_limit_percent:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+        own_tables_only:
+          type: boolean
+          description: Ofitsiant faqat o'z stollarini ko'radi
+    PatchedSettingRequest:
+      type: object
+      properties:
+        branch:
+          type: string
+          format: uuid
+          nullable: true
+        key:
+          type: string
+          minLength: 1
+          maxLength: 100
+        value: {}
+    Permission:
+      type: object
+      properties:
+        code:
+          type: string
+          maxLength: 64
+        name_uz:
+          type: string
+          maxLength: 150
+        name_ru:
+          type: string
+          maxLength: 150
+        group:
+          type: string
+          maxLength: 50
+      required:
+      - code
+      - group
+      - name_ru
+      - name_uz
+    PinLoginRequest:
+      type: object
+      properties:
+        pin:
+          type: string
+          minLength: 4
+          maxLength: 4
+        user_id:
+          type: string
+          format: uuid
+      required:
+      - pin
+    Plan:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        code:
+          type: string
+          maxLength: 50
+          pattern: ^[-a-zA-Z0-9_]+$
+        name:
+          type: string
+          maxLength: 100
+        price_monthly:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+        max_branches:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        max_pos:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          description: Kassa (POS/HUB) qurilmalari
+        max_waiters:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          description: Ofitsiant qurilmalari
+        max_kds:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        max_managers:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        max_couriers:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        modules: {}
+      required:
+      - code
+      - id
+      - name
+    RegisterRequest:
+      type: object
+      properties:
+        phone:
+          type: string
+          minLength: 1
+        code:
+          type: string
+          minLength: 1
+          maxLength: 6
+        company_name:
+          type: string
+          minLength: 1
+          maxLength: 200
+        business_type:
+          $ref: '#/components/schemas/BusinessTypeEnum'
+        full_name:
+          type: string
+          minLength: 1
+          maxLength: 150
+        password:
+          type: string
+          writeOnly: true
+          minLength: 6
+        language:
+          allOf:
+          - $ref: '#/components/schemas/LanguageEnum'
+          default: uz
+      required:
+      - business_type
+      - code
+      - company_name
+      - full_name
+      - password
+      - phone
+    ResetPasswordRequest:
+      type: object
+      properties:
+        phone:
+          type: string
+          minLength: 1
+        code:
+          type: string
+          minLength: 1
+          maxLength: 6
+        new_password:
+          type: string
+          minLength: 6
+      required:
+      - code
+      - new_password
+      - phone
+    Role:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        code:
+          type: string
+          maxLength: 50
+          pattern: ^[-a-zA-Z0-9_]+$
+        name:
+          type: string
+          maxLength: 100
+        is_system:
+          type: boolean
+          readOnly: true
+        login_type:
+          $ref: '#/components/schemas/LoginTypeEnum'
+        all_permissions:
+          type: boolean
+          readOnly: true
+          description: 'Ega roli: barcha huquqlar'
+        permissions:
+          type: array
+          items:
+            type: string
+        discount_limit_percent:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+        own_tables_only:
+          type: boolean
+          description: Ofitsiant faqat o'z stollarini ko'radi
+        users_count:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - all_permissions
+      - code
+      - created_at
+      - id
+      - is_system
+      - name
+      - updated_at
+      - users_count
+    RoleBrief:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        code:
+          type: string
+          maxLength: 50
+          pattern: ^[-a-zA-Z0-9_]+$
+        name:
+          type: string
+          maxLength: 100
+        login_type:
+          $ref: '#/components/schemas/LoginTypeEnum'
+        discount_limit_percent:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+        own_tables_only:
+          type: boolean
+          description: Ofitsiant faqat o'z stollarini ko'radi
+      required:
+      - code
+      - id
+      - name
+    RoleBriefRequest:
+      type: object
+      properties:
+        code:
+          type: string
+          minLength: 1
+          maxLength: 50
+          pattern: ^[-a-zA-Z0-9_]+$
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        login_type:
+          $ref: '#/components/schemas/LoginTypeEnum'
+        discount_limit_percent:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+        own_tables_only:
+          type: boolean
+          description: Ofitsiant faqat o'z stollarini ko'radi
+      required:
+      - code
+      - name
+    RoleRequest:
+      type: object
+      properties:
+        code:
+          type: string
+          minLength: 1
+          maxLength: 50
+          pattern: ^[-a-zA-Z0-9_]+$
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        login_type:
+          $ref: '#/components/schemas/LoginTypeEnum'
+        permissions:
+          type: array
+          items:
+            type: string
+            minLength: 1
+        discount_limit_percent:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+        own_tables_only:
+          type: boolean
+          description: Ofitsiant faqat o'z stollarini ko'radi
+      required:
+      - code
+      - name
+    SendCodeRequest:
+      type: object
+      properties:
+        phone:
+          type: string
+          minLength: 1
+      required:
+      - phone
+    Setting:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        branch:
+          type: string
+          format: uuid
+          nullable: true
+        key:
+          type: string
+          maxLength: 100
+        value: {}
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - id
+      - key
+      - updated_at
+    SettingRequest:
+      type: object
+      properties:
+        branch:
+          type: string
+          format: uuid
+          nullable: true
+        key:
+          type: string
+          minLength: 1
+          maxLength: 100
+        value: {}
+      required:
+      - key
+    SeverityEnum:
+      enum:
+      - INFO
+      - WARNING
+      - CRITICAL
+      type: string
+      description: |-
+        * `INFO` - Info
+        * `WARNING` - Warning
+        * `CRITICAL` - Critical
+    StatusEnum:
+      enum:
+      - ACTIVE
+      - BLOCKED
+      type: string
+      description: |-
+        * `ACTIVE` - Faol
+        * `BLOCKED` - Bloklangan
+    Subscription:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        plan:
+          allOf:
+          - $ref: '#/components/schemas/Plan'
+          readOnly: true
+        status:
+          type: string
+          readOnly: true
+        access:
+          type: string
+          readOnly: true
+        starts_at:
+          type: string
+          format: date-time
+        ends_at:
+          type: string
+          format: date-time
+        days_left:
+          type: integer
+          readOnly: true
+      required:
+      - access
+      - days_left
+      - ends_at
+      - id
+      - plan
+      - status
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+      required:
+      - access
+      - refresh
+    TokenRefreshRequest:
+      type: object
+      properties:
+        refresh:
+          type: string
+          minLength: 1
+      required:
+      - refresh

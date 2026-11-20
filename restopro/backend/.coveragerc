@@ -1,0 +1,3 @@
+[run]
+source = apps,integrations
+omit = */migrations/*,*/tests/*,*/admin.py,*/apps.py,apps/tenancy/onboarding/data.py,*/management/*

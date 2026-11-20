@@ -1,0 +1,55 @@
+name: restopro
+description: RestoPro — restoran, oshxona va kafe boshqaruv tizimi (Kassa / Ofitsiant / Oshxona / Boshqaruv / Kuryer).
+publish_to: "none"
+version: 0.1.0+1
+
+environment:
+  sdk: ">=3.6.0 <4.0.0"
+  flutter: ">=3.27.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # Holat va navigatsiya
+  flutter_riverpod: ^2.6.1
+  go_router: ^14.6.2
+
+  # Offline baza (SQLite, WAL)
+  drift: ^2.22.1
+  sqlite3_flutter_libs: ^0.5.28
+  path_provider: ^2.1.5
+  path: ^1.9.0
+
+  # Tarmoq
+  dio: ^5.7.0
+  web_socket_channel: ^3.0.1
+  connectivity_plus: ^6.1.1
+
+  # Xavfsizlik, til, oyna
+  flutter_secure_storage: ^9.2.2
+  intl: any
+  window_manager: ^0.4.3
+
+  # Modellar (keyingi bosqichlarda DTO'lar uchun)
+  freezed_annotation: ^2.4.4
+  json_annotation: ^4.9.0
+
+  # Keyingi bosqichlarda qo'shiladi (native sozlama talab qiladi):
+  #  4-bosqich: shelf, shelf_router, shelf_web_socket, multicast_dns (lokal hub)
+  #  3-bosqich: esc_pos_utils_plus (printer), audioplayers
+  #  6-7-bosqich: mobile_scanner, fl_chart, pdf, printing, firebase_messaging
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  build_runner: ^2.4.13
+  drift_dev: ^2.22.1
+  freezed: ^2.5.7
+  json_serializable: ^6.9.0
+
+flutter:
+  uses-material-design: true

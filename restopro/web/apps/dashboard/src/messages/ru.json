@@ -1,0 +1,50 @@
+{
+  "nav": {
+    "dashboard": "Главная",
+    "branches": "Филиалы",
+    "employees": "Сотрудники",
+    "roles": "Роли и права",
+    "devices": "Устройства",
+    "audit": "Журнал аудита",
+    "settings": "Настройки",
+    "menu": "Меню",
+    "tables": "Залы и столы",
+    "orders": "Заказы",
+    "inventory": "Склад",
+    "reports": "Отчёты",
+    "soon": "скоро"
+  },
+  "auth": {
+    "login": "Войти",
+    "phone": "Телефон",
+    "password": "Пароль",
+    "noAccount": "Нет аккаунта?",
+    "register": "Регистрация",
+    "haveAccount": "Уже есть аккаунт?",
+    "sendCode": "Отправить SMS-код",
+    "code": "SMS-код",
+    "companyName": "Название заведения",
+    "businessType": "Тип бизнеса",
+    "fullName": "Ваше имя",
+    "create": "Зарегистрироваться",
+    "logout": "Выйти",
+    "codeSent": "Код отправлен на {phone}"
+  },
+  "common": {
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "add": "Добавить",
+    "edit": "Изменить",
+    "delete": "Удалить",
+    "search": "Поиск...",
+    "export": "Экспорт (CSV)",
+    "columns": "Колонки",
+    "loading": "Загрузка...",
+    "empty": "Нет данных",
+    "confirmDelete": "Удалить?",
+    "active": "Активен",
+    "inactive": "Неактивен",
+    "online": "Онлайн",
+    "offline": "Оффлайн"
+  }
+}

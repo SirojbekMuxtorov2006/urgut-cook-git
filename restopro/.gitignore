@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.coverage
+htmlcov/
+backend/.env
+backend/media/
+backend/staticfiles/
+
+# Node
+node_modules/
+.next/
+.turbo/
+*.tsbuildinfo
+
+# Flutter
+flutter_app/restopro/.dart_tool/
+flutter_app/restopro/build/
+flutter_app/restopro/**/*.g.dart
+flutter_app/restopro/**/*.freezed.dart
+
+# Infra
+infra/.env
+.DS_Store
